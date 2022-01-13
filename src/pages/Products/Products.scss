@@ -1,0 +1,20 @@
+.products-card{
+    .card-header{
+        display: flex;
+        justify-content: space-between;
+    }
+    .card-body{
+        tr{
+            td.title{
+                div{
+                    display: flex;
+                    gap: 12px;
+
+                    img{
+                        width: 50px;
+                    }
+                }
+            }
+        }
+    }
+}
