@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Pagination, Table } from 'react-bootstrap';
+import { Card, Pagination, Spinner, Table } from 'react-bootstrap';
 import Select from 'react-select'
 import { Product } from '../../types/product.types';
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import "./Products.scss";
 
 export default function Products() {
 
     const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>();
     const [sortBy, setSortBy] = useState<string>('id');
     const [order, setOrder] = useState<string>('asc');
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -25,7 +27,9 @@ export default function Products() {
             })
     }, []);
 
-    const products = allProducts.sort((a, b) => {
+    const filteredProducts = allProducts.filter(product => !selectedCategory || product.category === selectedCategory);
+
+    const products = filteredProducts.sort((a, b) => {
         let result;
         switch (sortBy) {
             case "rating":
@@ -44,7 +48,7 @@ export default function Products() {
     }).slice((currentPage - 1) * 5, currentPage * 5);
 
     const pages = []
-    for (let number = 1; number <= allProducts.length / 5; number++) {
+    for (let number = 1; number <= filteredProducts.length / 5; number++) {
         pages.push(
             <Pagination.Item key={number} active={number === currentPage} onClick={() => setCurrentPage(number)}>
                 {number}
@@ -52,28 +56,59 @@ export default function Products() {
         );
     }
 
+    const switchOrder = () => setOrder(ord => ord === "asc" ? "desc" : "asc");
+
+    const changeSort = (newSort: string) => {
+        if (newSort === sortBy) return switchOrder();
+
+        setSortBy(newSort);
+        setOrder("asc");
+        setCurrentPage(1);
+    }
+
+    const renderArrow = (type: string) => type === "desc" ? <BsChevronUp /> : <BsChevronDown />;
+
+    const disablePagination = filteredProducts.length / 5 <= 1;
+
     return <Card className='products-card'>
         <Card.Header>
             <h3>
                 Fake products
             </h3>
             <div>
-                <Select options={categories.map(cat => ({ value: cat, label: cat }))} />
+                <Select onChange={(newValue) => setSelectedCategory(newValue?.value)} 
+                        placeholder="Filter by category" 
+                        options={categories.map(cat => ({ value: cat, label: cat }))} 
+                        className="select" 
+                        isClearable />
             </div>
         </Card.Header>
-        <Card.Body>
+        {loading ? <Card.Body style={{display: 'flex', justifyContent: 'center', margin: '150px 0'}}>
+            <Spinner animation="border" />
+        </Card.Body> : <Card.Body>
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>
+                            <a href='#' onClick={() => changeSort('id')}>
+                                ID
+                                {sortBy === "id" && renderArrow(order)}
+                            </a>
+                        </th>
                         <th>Title</th>
                         <th>Description</th>
                         <th>
-                            <a href='#'>
+                            <a href='#' onClick={() => changeSort('price')}>
                                 Price
+                                {sortBy === "price" && renderArrow(order)}
                             </a>
                         </th>
-                        <th>Rating</th>
+                        <th>
+                            <a href='#' onClick={() => changeSort('rating')}>
+                                Rating
+                                {sortBy === "rating" && renderArrow(order)}
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,12 +127,12 @@ export default function Products() {
                 </tbody>
             </Table>
             <Pagination>
-                <Pagination.First disabled={currentPage === 1} onClick={() => setCurrentPage(1)}/>
-                <Pagination.Prev disabled={currentPage === 1} onClick={() => setCurrentPage(curr => curr - 1)}/>
+                <Pagination.First disabled={disablePagination || currentPage === 1} onClick={() => setCurrentPage(1)} />
+                <Pagination.Prev disabled={disablePagination || currentPage === 1} onClick={() => setCurrentPage(curr => curr - 1)} />
                 {pages}
-                <Pagination.Next disabled={currentPage === allProducts.length / 5} onClick={() => setCurrentPage(curr => curr + 1)}/>
-                <Pagination.Last disabled={currentPage === allProducts.length / 5} onClick={() => setCurrentPage(allProducts.length / 5)}/>
+                <Pagination.Next disabled={disablePagination || currentPage === filteredProducts.length / 5} onClick={() => setCurrentPage(curr => curr + 1)} />
+                <Pagination.Last disabled={disablePagination || currentPage === filteredProducts.length / 5} onClick={() => setCurrentPage(filteredProducts.length / 5)} />
             </Pagination>
-        </Card.Body>
+        </Card.Body>}
     </Card>
 }

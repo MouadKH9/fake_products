@@ -1,7 +1,16 @@
 .products-card{
+    width: 75%;
+    margin: 0 auto;
+    margin-top: 100px;
+
+
     .card-header{
         display: flex;
         justify-content: space-between;
+
+        .select{
+            min-width: 100px
+        }
     }
     .card-body{
         tr{
@@ -11,8 +20,16 @@
                     gap: 12px;
 
                     img{
-                        width: 50px;
+                        width: 75px;
                     }
+                }
+            }
+
+            th{
+                a{
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
                 }
             }
         }
