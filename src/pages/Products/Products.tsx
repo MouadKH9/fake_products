@@ -90,24 +90,24 @@ export default function Products() {
                 <thead>
                     <tr>
                         <th>
-                            <a href='#' onClick={() => changeSort('id')}>
+                            <div className='sort' onClick={() => changeSort('id')}>
                                 ID
                                 {sortBy === "id" && renderArrow(order)}
-                            </a>
+                            </div>
                         </th>
                         <th>Title</th>
                         <th>Description</th>
                         <th>
-                            <a href='#' onClick={() => changeSort('price')}>
+                            <div className='sort'  onClick={() => changeSort('price')}>
                                 Price
                                 {sortBy === "price" && renderArrow(order)}
-                            </a>
+                            </div>
                         </th>
                         <th>
-                            <a href='#' onClick={() => changeSort('rating')}>
+                            <div className='sort' onClick={() => changeSort('rating')}>
                                 Rating
                                 {sortBy === "rating" && renderArrow(order)}
-                            </a>
+                            </div>
                         </th>
                     </tr>
                 </thead>
@@ -116,7 +116,7 @@ export default function Products() {
                         <td>{product.id}</td>
                         <td className='title'>
                             <div>
-                                <img src={product.image} />
+                                <img src={product.image} alt='Product'/>
                                 {product.title}
                             </div>
                         </td>

@@ -26,10 +26,12 @@
             }
 
             th{
-                a{
+                div.sort{
                     display: flex;
                     align-items: center;
                     gap: 5px;
+                    color: #0d6efd;
+                    cursor: pointer;
                 }
             }
         }
